@@ -1,0 +1,37 @@
+{% extends 'basic.html' %}
+{% block title %}View Package{% endblock title %}
+{% block body %}
+<div class="container mt-4">
+    <h3 class="text-success">Package Details</h3>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Item:</strong> {{ package.package_type }}</p>
+            <p><strong>Event:</strong> {{ package.agency.location|capfirst }}</p>
+        </div>
+    </div>
+    <hr>
+    {% if reservations %}
+    <h3 class="text-success">Bookings</h3>
+    <table class="table table-bordered table-hover"> <!-- Added text-center class to center align all content -->
+        <thead>
+            <tr>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for each_detail in reservations %}
+            <tr>
+                <td>{{ each_detail.guest.username }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><strong>Total bookings:</strong> {{ reservations|length }}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+    <p>No details found</p>
+    {% endif %}
+</div>
+{% endblock body %}

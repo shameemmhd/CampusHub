@@ -1,0 +1,278 @@
+{% extends 'basic.html' %} {% block title %} staff panel {% endblock title %} 
+{%block body %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="text-primary text-uppercase text-center" style="letter-spacing: 5px;">ITEM DETAILS</h6>
+
+            <!-- Add New Item button -->
+            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#newpackage">Add New Item</button>
+
+            <div class="table-container">
+                <!-- Table -->
+                <table class="table table-bordered table-hover text-center"> <!-- Added text-center class to center align all content -->
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Item</th>
+                            <th>Cash Prize</th>
+                            <th colspan="3">Actions</th> <!-- Changed colspan to 3 for three buttons -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Your loop goes here -->
+                        {% if packages %}
+                        {% for each_package in packages %}
+                        <tr>
+                            <td>{{each_package.package_type}}</td>
+                            <td>Rs {{each_package.price}}</td>
+                            {% comment %} <td>
+                                <a href="/staff/panel/edit-package?packageid={{each_package.id}}" class="btn btn-success">Edit</a>
+                            </td> {% endcomment %}
+                            <td>
+                                <a href="/staff/panel/view-package?packageid={{each_package.id}}" class="btn btn-success">View</a>
+                            </td>
+                            <td>
+                                <a href="/staff/panel/delete_package?packageid={{each_package.id}}" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="text-primary text-uppercase text-center" style="letter-spacing: 5px;">EVENT DETAILS</h6>
+
+            <button
+            class="btn btn-group btn-primary float-left mb-3"
+            data-toggle="modal"
+            data-target="#newlocation"
+            >
+            Add New Event
+            </button>
+
+            <div class="table-responsive mt-4 mb-4">
+                <table class="table table-bordered table-hover text-center">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Events</th>
+                            {% comment %} <th>Action</th> {% endcomment %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for each_location, each_id in location %}
+                        <tr>
+                            <td> {{ each_location }}</td>
+                            {% comment %} <td>
+                                <a href="/staff/panel/delete-agency?agencyid={{ each_agency.id }}">
+                                    <button class="btn btn-danger">Delete</button>
+                                </a>
+                            </td> {% endcomment %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!--Modal for Add New Location starts from here-->
+
+  <!-- The Modal -->
+  <div class="modal" id="newlocation">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add New Event</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col mx-auto">
+                <form action="/staff/panel/add-new-location" method="POST">
+                  {% csrf_token %}
+
+                  <div class="form-group">
+                    <label for="Owner">Organiser:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new_owner"
+                      name="new_owner"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="city">Event Name:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new_city"
+                      name="new_city"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <!-- Hidden input field for State with default value -->
+                    <input
+                      type="hidden"
+                      id="new_state"
+                      name="new_state"
+                      value="Pondicherry"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <!-- Hidden input field for Country with default value -->
+                    <input
+                      type="hidden"
+                      id="new_country"
+                      name="new_country"
+                      value="India"
+                    />
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Modal for Add New location Ends here-->
+
+  <!--Modal for Add New package starts from here-->
+
+  <!-- The Modal -->
+  <div class="modal" id="newpackage">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add New Item</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col mx-auto">
+                <form action="/staff/panel/add-new-package" method="POST">
+                  {% csrf_token %}
+
+                  <div class="form-group">
+                    <label for="packagetype">Item Name:</label>
+                    <input type="text" class="form-control" id="packagetype" name="packagetype" placeholder="Enter item name">
+                </div>
+                
+                  <div class="form-group d-none">
+                    <label for="pwd">Capacity:</label>
+                    <input
+                    class="form-control"
+                    id="capacity"
+                    name="capacity"
+                    value="500"
+                  />
+                  </div>
+                  <div class="form-group">
+                    <label for="pwd">Cash Price:</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="price"
+                      name="price"
+                    />
+                  </div>
+                  <div class="form-group d-none">
+                    <label for="pwd">Size:</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="size"
+                      name="size"
+                      value="100"
+                    />
+                  </div>
+                  <div class="form-group d-none">
+                    <label for="pwd">Status:</label>
+                    <select
+                      class="form-control"
+                      name="status"
+                      id="packagestatus"
+                      value="1"
+                    >
+                      <option value="1">Active</option>
+                      <option value="2">Not Active</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="pwd">Event Name:</label>
+
+                    <select class="form-control" name="agency" id="agency">
+                      {% for each_location,eachid in location%}
+                      <option value="{{eachid}}">{{each_location}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                    Add 
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Modal for Add New package Ends here-->
+
+  {% endblock body %} {% block js %}
+  <!-- jquery for package stats  starts here-->
+  <script>
+    $(function () {
+      $(".progress").each(function () {
+        var value = $(this).attr("data-value");
+        var left = $(this).find(".progress-left .progress-bar");
+        var right = $(this).find(".progress-right .progress-bar");
+
+        if (value > 0) {
+          if (value <= 50) {
+            right.css(
+              "transform",
+              "rotate(" + percentageToDegrees(value) + "deg)"
+            );
+          } else {
+            right.css("transform", "rotate(180deg)");
+            left.css(
+              "transform",
+              "rotate(" + percentageToDegrees(value - 50) + "deg)"
+            );
+          }
+        }
+      });
+
+      function percentageToDegrees(percentage) {
+        return (percentage / 100) * 360;
+      }
+    });
+  </script>
+  <!--Jquery for package stats ends here-->
+  {% endblock js %}
+</table>

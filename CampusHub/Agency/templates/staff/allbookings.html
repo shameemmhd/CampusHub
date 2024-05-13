@@ -1,0 +1,27 @@
+{% extends 'basic.html' %}
+{% block title %}All Bookings{% endblock title %}
+{% block body %}
+<div class="container">
+    <h3 class="text-primary text-uppercase text-center" style="letter-spacing: 5px;">ALL BOOKINGS</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Item</th>
+                    <th>Event</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for each_booking in bookings %}
+                <tr>
+                    <td>{{ each_booking.guest.username }}</td>
+                    <td>{{ each_booking.package.package_type }}</td>
+                    <td>{{ each_booking.package.agency.location }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock body %}
