@@ -1,0 +1,35 @@
+{% extends 'basic.html' %}
+{% block title %}All Bookings{% endblock title %}
+{% block body %}
+<div class="container">
+    <h2>User Information</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>College ID</th>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user_profile in user_profiles %}
+            <tr>
+                <td>{{ user_profile.user.username }}</td>
+                <td>{{ user_profile.college_id }}</td>
+                <td>{{ user_profile.id_file }}</td>
+                <td>{{ user_profile.status }}</td>
+
+                <td>
+                        <form method="post" action="{% url 'approve_user' user_profile.user.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock body %}

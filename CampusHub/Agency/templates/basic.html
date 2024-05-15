@@ -54,6 +54,11 @@
                             <a class="nav-link text-bold" href="/staff/allbookings">All Bookings </a>
                         </li>
                     {% endif %}
+                    {% if user.is_staff %}
+                    <li class="nav-item active">
+                        <a class="nav-link text-bold" href="/staff/userInformations">Registered users</a>
+                        </li>
+                    {% endif %}
                     {% if user.is_staff == False and user.is_authenticated %}
                     <li class="nav-item active">
                             <a class="nav-link text-bold" href="">Book Exchange </a>

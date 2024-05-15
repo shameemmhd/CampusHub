@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Agencys, Packages, Reservation, StaffProfiles
+from .models import Agencys, Packages, Reservation, StaffProfiles, UserProfile
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -33,26 +33,28 @@ def contactpage(request):
 def user_sign_up(request):
     if request.method == "POST":
         user_name = request.POST['username']
-
         password1 = request.POST['password1']
         password2 = request.POST['password2']
+        college_id = request.POST['college_id']
+        id_file = request.FILES['id_file']
 
         if password1 != password2:
-            messages.warning(request, "Password didn't matched")
+            messages.warning(request, "Password didn't match")
             return redirect('userloginpage')
 
-        try:
-            if User.objects.all().get(username=user_name):
-                messages.warning(request, "Username Not Available")
-                return redirect('userloginpage')
-        except:
-            pass
+        if User.objects.filter(username=user_name).exists():
+            messages.warning(request, "Username not available")
+            return redirect('userloginpage')
 
         new_user = User.objects.create_user(username=user_name, password=password1)
         new_user.is_superuser = False
         new_user.is_staff = False
         new_user.save()
-        messages.success(request, "Registration Successfull")
+
+        # Create UserProfile
+        UserProfile.objects.create(user=new_user, college_id=college_id, status='pending', id_file=id_file)
+
+        messages.success(request, "Registration successful please wait patiently for confirmation")
         return redirect("userloginpage")
     return HttpResponse('Access Denied')
 
@@ -93,17 +95,26 @@ def user_log_sign_page(request):
         password = request.POST['pswd']
 
         user = authenticate(username=email, password=password)
-        try:
+        
+        if user is not None:
+            # Check if the user is staff
             if user.is_staff:
                 messages.error(request, "Incorrect username or Password")
                 return redirect('staffloginpage')
-        except:
-            pass
+            
+            # Check if the user profile exists and status is active
+            try:
+                user_profile = UserProfile.objects.get(user=user)
+                if user_profile.status != 'active':
+                    messages.warning(request, "Your account is not active. Please contact support.")
+                    return redirect('userloginpage')
+            except UserProfile.DoesNotExist:
+                messages.warning(request, "Your account is not active. Please contact support.")
+                return redirect('userloginpage')
 
-        if user is not None:
             login(request, user)
             messages.success(request, "successful logged in")
-            print("Login successfull")
+            print("Login successful")
             return redirect('homepage')
         else:
             messages.warning(request, "Incorrect username or password")
@@ -111,7 +122,6 @@ def user_log_sign_page(request):
 
     response = render(request, 'user/userlogsign.html')
     return HttpResponse(response)
-
 
 # logout for admin and user
 def logoutuser(request):
@@ -350,3 +360,15 @@ def delete_agency(request):
             except Agencys.DoesNotExist:
                 messages.error(request, "Event does not exist")
     return redirect('staffpanel')  
+
+def user_information(request):
+    user_profiles = UserProfile.objects.all()
+    return render(request, 'staff/user_information.html', {'user_profiles': user_profiles})
+
+def approve_user(request, user_id):
+    user_profile = UserProfile.objects.get(user_id=user_id)
+    user_profiles = UserProfile.objects.all()
+    user_profile.status = 'active'
+    user_profile.save()
+    messages.success(request, "User approved successfully.")
+    return render(request, 'staff/user_information.html', {'user_profiles': user_profiles})

@@ -47,6 +47,7 @@ urlpatterns = [
     path('staff/panel/view-package', views.view_package),
 path('staff/panel/delete-agency', views.delete_agency, name='delete_agency'),
     path('admin/', admin.site.urls),
-
+    path('staff/userInformations', views.user_information,name="allbookigs"),
+ path('approve-user/<int:user_id>/', views.approve_user, name='approve_user'),
 
 ]
