@@ -60,9 +60,16 @@
                         </li>
                     {% endif %}
                     {% if user.is_staff == False and user.is_authenticated %}
-                    <li class="nav-item active">
-                            <a class="nav-link text-bold" href="">Book Exchange </a>
-                        </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Book Exchange
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                          <a class="dropdown-item" href="{% url 'book_list' %}">View Books</a>
+                          <a class="dropdown-item" href="{% url 'post_book' %}">Post a Book</a>
+                          <a class="dropdown-item" href="{% url 'exchange_requests' %}">View Requests</a>
+                        </div>
+                      </li>
                     {% endif %}
 
                 

@@ -1,0 +1,33 @@
+{% extends 'basic.html' %}
+{% block title %}Book Exchange{% endblock title %}
+{% block body %}
+<div class="container">
+    <h2>Available Books for Exchange</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Description</th>
+                <th>Posted By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.book.title }}</td>
+                <td>{{ book.book.author }}</td>
+                <td>{{ book.description }}</td>
+                <td>{{ book.user.username }}</td>
+                <td>
+                    {% if book.user != user %}
+                    <a href="{% url 'request_exchange' book.id %}" class="btn btn-primary">Request Exchange</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock body %}

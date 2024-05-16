@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Agencys, Packages, Reservation, StaffProfiles, UserProfile
+from .models import Agencys, Packages, Reservation, StaffProfiles, UserProfile, BookPost, Book, ExchangeRequest
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -376,3 +376,59 @@ def approve_user(request, user_id):
 def map_view(request):
     return render(request, 'staff/map.html')
 
+@login_required
+def book_list(request):
+    books = BookPost.objects.all()
+    return render(request, 'user/book_list.html', {'books': books})
+
+@login_required
+def post_book(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        author = request.POST['author']
+        isbn = request.POST['isbn']
+        description = request.POST['description']
+        
+        book, created = Book.objects.get_or_create(title=title, author=author, isbn=isbn)
+        BookPost.objects.create(user=request.user, book=book, description=description)
+        
+        return redirect('book_list')
+    
+    return render(request, 'user/post_book.html')
+
+@login_required
+def request_exchange(request, post_id):
+    post = get_object_or_404(BookPost, id=post_id)
+    if request.method == 'POST':
+        message = request.POST['message']
+        
+        ExchangeRequest.objects.create(
+            from_user=request.user,
+            to_user=post.user,
+            book_post=post,
+            message=message
+        )
+        
+        return redirect('book_list')
+    
+    return render(request, 'user/request_exchange.html', {'post': post})
+
+@login_required
+def exchange_requests(request):
+    received_requests = ExchangeRequest.objects.filter(to_user=request.user)
+    sent_requests = ExchangeRequest.objects.filter(from_user=request.user)
+    return render(request, 'user/exchange_requests.html', {
+        'received_requests': received_requests,
+        'sent_requests': sent_requests
+    })
+
+@login_required
+def respond_request(request, request_id, response):
+    exchange_request = get_object_or_404(ExchangeRequest, id=request_id)
+    if exchange_request.to_user == request.user:
+        if response == 'approve':
+            exchange_request.status = 'approved'
+        elif response == 'decline':
+            exchange_request.status = 'declined'
+        exchange_request.save()
+    return redirect('exchange_requests')

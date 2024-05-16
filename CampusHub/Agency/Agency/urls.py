@@ -50,5 +50,9 @@ path('staff/panel/delete-agency', views.delete_agency, name='delete_agency'),
     path('staff/userInformations', views.user_information,name="allbookigs"),
  path('approve-user/<int:user_id>/', views.approve_user, name='approve_user'),
     path('staff/map.html', views.map_view, name='map'),
-
+ path('books/', views.book_list, name='book_list'),
+    path('user/books/post/', views.post_book, name='post_book'),
+    path('user/books/request/<int:post_id>/', views.request_exchange, name='request_exchange'),
+     path('user/books/requests/', views.exchange_requests, name='exchange_requests'),
+    path('user/books/requests/respond/<int:request_id>/<str:response>/', views.respond_request, name='respond_request'),
 ]

@@ -1,0 +1,15 @@
+{% extends 'basic.html' %}
+{% block title %}Request Exchange{% endblock title %}
+{% block body %}
+<div class="container">
+    <h2>Request Exchange for {{ post.book.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Request</button>
+    </form>
+</div>
+{% endblock body %}

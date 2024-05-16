@@ -81,3 +81,32 @@ class Calendar(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200)
+    isbn = models.CharField(max_length=13, unique=True)
+
+    def __str__(self):
+        return self.title
+
+class BookPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    description = models.TextField()
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.book.title} by {self.user.username}"
+
+class ExchangeRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
+    book_post = models.ForeignKey(BookPost, on_delete=models.CASCADE)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('approved', 'Approved'), ('declined', 'Declined')], default='pending')
+    requested_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.from_user.username} -> {self.to_user.username} ({self.book_post.book.title})"
+    
