@@ -372,3 +372,7 @@ def approve_user(request, user_id):
     user_profile.save()
     messages.success(request, "User approved successfully.")
     return render(request, 'staff/user_information.html', {'user_profiles': user_profiles})
+
+def map_view(request):
+    return render(request, 'staff/map.html')
+

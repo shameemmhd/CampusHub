@@ -1,0 +1,128 @@
+{% extends 'basic.html' %}
+{% block title %}Campus Map{% endblock title %}
+{% block body %}
+
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
+    <style>
+        #map-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        #map {
+            height: 500px;
+            width: 70%;
+        }
+        #search-container {
+            width: 25%;
+            padding: 10px;
+        }
+        #search {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            display: none;
+        }
+        #search-results div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        #search-results div:hover {
+            background-color: #f1f1f1;
+        }
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map-container">
+    <div id="map"></div>
+
+    <div id="search-container">
+        <input type="text" id="search" placeholder="Search for a location..." onkeyup="filterLocations()">
+        <div id="search-results"></div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.js"></script>
+<script>
+    // Coordinates for Pondicherry University, India
+    var pondicherryUniversityLat = 12.0219;
+    var pondicherryUniversityLng = 79.8570;
+
+    var map = L.map('map').setView([pondicherryUniversityLat, pondicherryUniversityLng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Adding a marker for Pondicherry University
+    L.marker([pondicherryUniversityLat, pondicherryUniversityLng]).addTo(map)
+        .bindPopup('Pondicherry University, India')
+        .openPopup();
+
+    // Predefined locations within Pondicherry University
+    var locations = [
+        { name: 'Department of Computer Science', lat: 12.0221, lng: 79.8551 },
+        { name: 'Library', lat: 12.0230, lng: 79.8565 },
+        { name: 'Auditorium', lat: 12.0205, lng: 79.8583 }
+        // Add more locations here
+    ];
+
+    function filterLocations() {
+        var input = document.getElementById('search').value.toLowerCase();
+        var resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = '';
+        var filteredLocations = locations.filter(function(location) {
+            return location.name.toLowerCase().includes(input);
+        });
+
+        if (filteredLocations.length > 0) {
+            resultsContainer.style.display = 'block';
+            filteredLocations.forEach(function(location) {
+                var resultItem = document.createElement('div');
+                resultItem.innerHTML = location.name;
+                resultItem.onclick = function() {
+                    showLocation(location);
+                    resultsContainer.style.display = 'none';
+                };
+                resultsContainer.appendChild(resultItem);
+            });
+        } else {
+            resultsContainer.style.display = 'none';
+        }
+    }
+
+    function showLocation(location) {
+        map.setView([location.lat, location.lng], 17);
+        L.marker([location.lat, location.lng]).addTo(map)
+            .bindPopup(location.name)
+            .openPopup();
+    }
+
+    // Define routing control
+    var routingControl = L.Routing.control({
+        waypoints: [
+            L.latLng(12.0221, 79.8551), // Example starting point
+            L.latLng(12.0230, 79.8565)  // Example destination
+        ],
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim(),
+        router: L.Routing.osrm()
+    }).addTo(map);
+</script>
+
+</body>
+{% endblock body %}
