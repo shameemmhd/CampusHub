@@ -55,4 +55,5 @@ path('staff/panel/delete-agency', views.delete_agency, name='delete_agency'),
     path('user/books/request/<int:post_id>/', views.request_exchange, name='request_exchange'),
      path('user/books/requests/', views.exchange_requests, name='exchange_requests'),
     path('user/books/requests/respond/<int:request_id>/<str:response>/', views.respond_request, name='respond_request'),
+    path('user/my_books/', views.my_books, name='my_books'),
 ]

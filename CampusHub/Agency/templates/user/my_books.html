@@ -1,26 +1,19 @@
 {% extends 'basic.html' %}
-{% block title %}Available Books{% endblock title %}
+{% block title %}My Books{% endblock title %}
 {% block body %}
 <div class="container mt-4">
-    <h2 class="mb-4">Available Books</h2>
+    <h2 class="mb-4">My Books</h2>
     <div class="row">
-        {% for book_post in books %}
-        {% if book_post.user != request.user %}
+        {% for book_post in my_books %}
         <div class="col-md-4 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">{{ book_post.book.title }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{ book_post.book.author }}</h6>
                     <p class="card-text">{{ book_post.description }}</p>
-                    {% if request.user in book_post.exchange_requests.all %}
-                    <button class="btn btn-secondary" disabled>Requested</button>
-                    {% else %}
-                    <a href="{% url 'request_exchange' book_post.id %}" class="btn btn-primary">Request Exchange</a>
-                    {% endif %}
                 </div>
             </div>
         </div>
-        {% endif %}
         {% endfor %}
     </div>
 </div>

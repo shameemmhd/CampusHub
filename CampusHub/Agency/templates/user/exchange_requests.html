@@ -1,87 +1,76 @@
 {% extends 'basic.html' %}
 {% block title %}Exchange Requests{% endblock title %}
 {% block body %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h2>Received Requests</h2>
-                </div>
-                <div class="card-body">
-                    <table class="table table-hover table-responsive-md">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>From</th>
-                                <th>Book</th>
-                                <th>Message</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for request in received_requests %}
-                            <tr>
-                                <td>{{ request.from_user.username }}</td>
-                                <td>{{ request.book_post.book.title }}</td>
-                                <td>{{ request.message }}</td>
-                                <td>
-                                    {% if request.status == 'pending' %}
-                                        <span class="badge badge-warning">Pending</span>
-                                    {% elif request.status == 'approved' %}
-                                        <span class="badge badge-success">Approved</span>
-                                    {% else %}
-                                        <span class="badge badge-danger">Declined</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if request.status == 'pending' %}
-                                    <a href="{% url 'respond_request' request.id 'approve' %}" class="btn btn-success btn-sm mr-2">Approve</a>
-                                    <a href="{% url 'respond_request' request.id 'decline' %}" class="btn btn-danger btn-sm">Decline</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Exchange Requests</h2>
 
-            <div class="card mb-4">
-                <div class="card-header bg-secondary text-white">
-                    <h2>Sent Requests</h2>
-                </div>
-                <div class="card-body">
-                    <table class="table table-hover table-responsive-md">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>To</th>
-                                <th>Book</th>
-                                <th>Message</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for request in sent_requests %}
-                            <tr>
-                                <td>{{ request.to_user.username }}</td>
-                                <td>{{ request.book_post.book.title }}</td>
-                                <td>{{ request.message }}</td>
-                                <td>
-                                    {% if request.status == 'pending' %}
-                                        <span class="badge badge-warning">Pending</span>
-                                    {% elif request.status == 'approved' %}
-                                        <span class="badge badge-success">Approved</span>
-                                    {% else %}
-                                        <span class="badge badge-danger">Declined</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Received Requests
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>From</th>
+                        <th>Book</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Contact Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in received_requests %}
+                    <tr>
+                        <td>{{ request.from_user.username }}</td>
+                        <td>{{ request.book_post.book.title }}</td>
+                        <td>{{ request.message }}</td>
+                        <td>
+                            {% if request.status == 'pending' %}
+                            <a href="{% url 'respond_request' request.id 'approve' %}" class="btn btn-warning btn-sm">Approve</a>
+                            <a href="{% url 'respond_request' request.id 'decline' %}" class="btn btn-danger btn-sm">Decline</a>
+                            {% elif request.status == 'approved' %}
+                            <button type="submit" class="btn btn-success btn-sm" disabled>Approved</button>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if request.status == 'approved' %}
+                            <p>Phone: {{ request.from_user.userprofile.phone_number }}</p>
+                            <p>Department: {{ request.from_user.userprofile.department }}</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            Sent Requests
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>To</th>
+                        <th>Book</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in sent_requests %}
+                    <tr>
+                        <td>{{ request.to_user.username }}</td>
+                        <td>{{ request.book_post.book.title }}</td>
+                        <td>{{ request.message }}</td>
+                        <td>{{ request.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

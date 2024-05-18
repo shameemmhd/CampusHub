@@ -37,6 +37,8 @@ def user_sign_up(request):
         password2 = request.POST['password2']
         college_id = request.POST['college_id']
         id_file = request.FILES['id_file']
+        phone_number = request.POST['phone_number']
+        department = request.POST['department']
 
         if password1 != password2:
             messages.warning(request, "Password didn't match")
@@ -52,7 +54,7 @@ def user_sign_up(request):
         new_user.save()
 
         # Create UserProfile
-        UserProfile.objects.create(user=new_user, college_id=college_id, status='pending', id_file=id_file)
+        UserProfile.objects.create(user=new_user, college_id=college_id, status='pending', id_file=id_file ,phone_number=phone_number, department=department)
 
         messages.success(request, "Registration successful please wait patiently for confirmation")
         return redirect("userloginpage")
@@ -432,3 +434,8 @@ def respond_request(request, request_id, response):
             exchange_request.status = 'declined'
         exchange_request.save()
     return redirect('exchange_requests')
+
+@login_required
+def my_books(request):
+    my_books = BookPost.objects.filter(user=request.user)
+    return render(request, 'user/my_books.html', {'my_books': my_books})

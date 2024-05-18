@@ -69,6 +69,8 @@ class UserProfile(models.Model):
     college_id = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=20, blank=True, null=True)
     id_file = models.FileField(upload_to='id_files/', blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True) 
+    department = models.CharField(max_length=100, blank=True, null=True)  
 
     def __str__(self):
         return self.user.username
